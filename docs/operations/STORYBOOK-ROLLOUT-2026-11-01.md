@@ -12,7 +12,7 @@ Release fixes align public/dist atlas manifests with every runtime sheet/sprite,
 
 ## Verification and limitations
 
-TypeScript and production build pass. Frontend: 65 tests passed. Focused fuel tests cover repeated spark failure, exact traversal, success, lost targets, striker retention and conservation. Atlas source/public/export parity is separately tested.
+TypeScript and production build pass. Complete backend suite: 270/270 passed (including three seeds through 9,000 ticks each); frontend: 65/65 passed. Atlas parity test: 1/1 passed separately. Focused fuel tests cover repeated spark failure, exact traversal, success, lost targets, striker retention and conservation. Atlas source/public/export parity is separately tested.
 
 Actual browser demo checks at 1440x900 and 390x844 cover load, zoom, resident selection/follow and no horizontal overflow. Screenshots and videos are evidence of the isolated engine demo, not live-world tests.
 
