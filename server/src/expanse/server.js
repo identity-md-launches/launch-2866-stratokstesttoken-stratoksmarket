@@ -1,6 +1,7 @@
 // Headless, viewer-independent Phase 2B service: ticks the expanse on a timer, persists periodically and exposes
 // Read-only world endpoints plus isolated, visitor-only authentication. Auth never mutates the world.
 import http from 'node:http';
+import { startCognition } from './cognition.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { Expanse } from './engine.js';
@@ -8,10 +9,15 @@ import { save, load, SNAPSHOT } from './persist.js';
 import { viewport, minimap, inspect, frame } from './view.js';
 import { VisitorAuth, handleVisitorAuth } from './visitor-auth.js';
 
-export function startExpanse({ dataDir, seed, tickMs = 1000, saveEveryTicks = 300, port = 8788, host = '127.0.0.1', initialCount = 24, allowedOrigins = [], auth: authOptions = null }) {
+export function startExpanse({ dataDir, seed, tickMs = 1000, saveEveryTicks = 300, port = 8788, host = '127.0.0.1', initialCount = 24, allowedOrigins = [], auth: authOptions = null, cognition: cognitionOptions = null }) {
   fs.mkdirSync(dataDir, { recursive: true });
   const world = fs.existsSync(path.join(dataDir, SNAPSHOT)) ? load(dataDir) : Expanse.create({ initialCount }, { seed });
   if (!fs.existsSync(path.join(dataDir, SNAPSHOT))) save(dataDir, world);
+  let cognition = null, cognitionUnavailable = false;
+  if (cognitionOptions) {
+    try { cognition = startCognition(world, cognitionOptions); }
+    catch { cognitionUnavailable = true; }
+  }
   // A damaged private store disables login, never anonymous world viewing. No private error details are published.
   let auth = null, authUnavailable = false;
   if (authOptions) {
@@ -39,19 +45,21 @@ export function startExpanse({ dataDir, seed, tickMs = 1000, saveEveryTicks = 30
     else if (u.pathname === '/api/expanse/minimap') body = minimap(world);
     else if (u.pathname.startsWith('/api/expanse/creature/')) body = inspect(world, Number(u.pathname.split('/').pop()));
     else if (u.pathname === '/api/expanse/discoveries') body = { discoveries: world.discoveries.slice(-200), social: world.social.slice(-100) };
+    else if (u.pathname === '/api/expanse/cognition') body = cognition?.status() ?? {enabled:false,unavailable:cognitionUnavailable};
     else if (u.pathname === '/healthz') body = { ok: true, worldId: world.id ?? null, tick: world.tick, mode: world.mode };
     if (body === undefined || body === null) { res.writeHead(404, { 'content-type': 'application/json' }); return res.end('{"error":"not found"}'); }
     res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' }); res.end(JSON.stringify(body));
   });
   server.requestTimeout = 15_000; server.headersTimeout = 10_000; server.maxHeadersCount = 64;
   server.listen(port, host);
-  const stop = () => new Promise((r) => { clearInterval(timer); clearInterval(authGc); save(dataDir, world); server.close(() => r()); });
-  return { world, server, stop, auth, authUnavailable };
+  const stop = () => new Promise((r) => { clearInterval(timer); clearInterval(authGc); cognition?.stop(); save(dataDir, world); server.close(() => r()); });
+  return { world, server, stop, auth, authUnavailable, cognition, cognitionUnavailable };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const env = process.env;
   const svc = startExpanse({ dataDir: env.EXPANSE_DATA_DIR ?? './data-expanse', seed: Number(env.WORLD_SEED ?? 20260101), tickMs: Number(env.TICK_MS ?? 1000), port: Number(env.PORT ?? 8788), host: env.HOST ?? '0.0.0.0',
+    cognition: env.LOCAL_MODEL_ENABLED === 'true' ? {url:env.LOCAL_MODEL_URL ?? 'http://local-model:11434',model:env.LOCAL_MODEL_NAME ?? 'qwen3:1.7b'} : null,
     auth: env.AUTH_URI ? { uri: env.AUTH_URI, allowedOrigins: (env.AUTH_ALLOWED_ORIGINS ?? '').split(',').filter(Boolean), trustedProxies: (env.AUTH_TRUSTED_PROXIES ?? '').split(',').filter(Boolean), chains: (env.AUTH_CHAINS ?? '1').split(',').map(Number), localDemo: env.AUTH_LOCAL_DEMO === 'true' } : null,
     initialCount: Number(env.INITIAL_SEED_COUNT ?? 24), allowedOrigins: (env.ALLOWED_ORIGINS ?? '').split(',').filter(Boolean) });
   if (svc.authUnavailable) console.error('Visitor authentication unavailable: check AUTH_URI, exact origins/chains and the private profile store. Anonymous viewing continues. See docs/auth/SETUP.md.');

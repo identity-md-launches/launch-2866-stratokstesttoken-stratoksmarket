@@ -1,0 +1,14 @@
+# Use with your existing world Compose file. Ollama must already be running.
+# docker compose -f compose.yml -f world.override.yml up -d world
+services:
+  world:
+    environment:
+      LOCAL_MODEL_ENABLED: 'true'
+      LOCAL_MODEL_URL: http://local-model:11434
+      LOCAL_MODEL_NAME: qwen3:1.7b
+    networks:
+      cognition:
+networks:
+  cognition:
+    external: true
+    name: stratoks-cognition

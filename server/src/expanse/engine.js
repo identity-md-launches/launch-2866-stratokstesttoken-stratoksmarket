@@ -1,5 +1,7 @@
 // Phase 2B "expanse" engine: authoritative, viewer-independent simulation of the extended chunked world.
-// Pure: no I/O, no wall clock; all randomness from the world's seeded Rng (persisted).
+// No I/O or wall clock here; seeded by default. Optional runtime adviser receipts
+// are external inputs and make enabled runs dependent on inference arrival ticks.
+import { actionSignature, usableAdvice, finishAdvice, LLM_BONUS } from './cognition-rules.js';
 import { Rng, hashSeed } from '../rng.js';
 import { createBrain, inheritBrain, innateUtility, clamp } from '../brain.js';
 import { ensureMushroom, encode, readout, reinforce, pickMushroom, MB_PARAMS } from '../mushroom.js';
@@ -478,6 +480,7 @@ export class Expanse {
     else if (c.hunger > 88) { const eat = afford(c.inventory, null).filter((s) => s.label === 'EAT' && s.prim !== 'use' || (s.prim === 'use' && s.on === 'self')); if (eat.length) reflex = [eat.find((s) => s.on === 'self') ?? eat[0]]; }
     if (reflex && !reflex.length) reflex = null;
     let chosen, cands;
+    const advice = usableAdvice(c, this.tick, this.localModelEnabled && this.mode === 'full');
     const P = this.cfg.planner, planning = this.mode !== 'no-planner';
     if (reflex) { chosen = { steps: reflex, preds: reflex.map((s) => predict(c.mind, s.key)), value: 0, source: 'reflex' }; this.totals.reflex++; }
     else {
@@ -497,8 +500,13 @@ export class Expanse {
         const gb = goal ? this.cfg.goalWeight * goal.urgency * goalBias(c.mind, goal, s.steps[0].key) : 0;
         return { a, u: innate + MB_PARAMS.gain * pref + (planning ? P.scale * s.value : 0) + gb, seq: s, innate, pref, gb };
       });
+      // Capture only this resident's real decision context; the async adviser never blocks ticks.
+      this.onCognitionCandidates?.(c, obs, cands);
+      let matched = false;
+      if (advice) for (const q of cands) if (actionSignature(q.seq.steps[0]) === advice.signature) { q.u += LLM_BONUS; q.llm = true; matched = true; }
       const pick = pickMushroom(mb, cands, 0.35);
-      chosen = { ...pick.seq, source: planning ? 'planner+mb-v1' : 'mb-v1', u: pick.u, innate: pick.innate, pref: pick.pref, gb: pick.gb };
+      finishAdvice(c, advice, this.tick, matched, !!pick.llm);
+      chosen = { ...pick.seq, source: (planning ? 'planner+mb-v1' : 'mb-v1') + (pick.llm ? '+local-llm' : ''), u: pick.u, innate: pick.innate, pref: pick.pref, gb: pick.gb };
       this.totals.planned++;
     }
     this.totals.decisions++; c.stats.decisions++;

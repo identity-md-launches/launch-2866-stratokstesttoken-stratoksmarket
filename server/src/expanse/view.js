@@ -55,6 +55,7 @@ export function inspect(e, id) {
   return { v: VIEW_VERSION, id: c.id, name: c.name, age: c.age, x: c.x, y: c.y, needs: { hunger: r(c.hunger), thirst: r(c.thirst), energy: r(c.energy), health: r(c.health), warmth: r(c.warmth), injury: c.injury },
     inventory: c.inventory, personality: c.personality, observation: c.lastObs ?? null, activity: e.activity(c), toolWear: c.toolWear ?? {}, home: c.home,
     currentPlan: c.plan ? { id: c.plan.id, tick: c.plan.tick, source: c.plan.source, steps: c.plan.steps, predicted: c.plan.predicted, actual: c.plan.actual, utility: c.plan.utility, mbPreference: c.plan.mbPreference, alternatives: c.plan.alternatives, index: c.plan.idx, plannerVersion: c.plan.plannerVersion } : null,
+    localModel: m.localModel ? {model:m.localModel.pending?.model ?? m.localModel.history.at(-1)?.model, pending:m.localModel.pending ? {key:m.localModel.pending.key,reason:m.localModel.pending.reason,expiresTick:m.localModel.pending.expiresTick}:null,history:m.localModel.history} : null,
     recentPlans: m.plans, episodes: m.episodes.slice(-12), knownNodes: Object.keys(m.known).length, knownWater: m.water, discoveries: m.discoveries,
     modelEntries: Object.keys(m.model).length, mbUpdates: c.brain.mb?.updates ?? 0, mode: e.mode, learning: e.learning && e.mode !== 'frozen',
     relationships: c.relationships, reputation: c.reputation, following: c.following,

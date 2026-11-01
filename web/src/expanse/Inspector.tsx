@@ -282,6 +282,14 @@ export function CreatureInspector({
             {detail.activity.progress > 0 && <><meter min={0} max={1} value={detail.activity.progress} aria-label="Current action progress"/><p className="exp-small exp-muted">{Math.round(detail.activity.progress*100)}% of this action</p></>}
             <p className="exp-small exp-muted">{detail.activity.state === "fish" ? "A line is held; casting, waiting and reeling follow the engine phase. Catch is not guaranteed." : detail.activity.state === "inspect" ? "Looking is not fishing. No cast is shown without a line." : "This is the received engine state. The plan below may describe a destination still being approached."}</p>
           </section>}
+          {detail.localModel && <details className="exp-science exp-details" open>
+            <summary>Local model experiment<span>Plan adviser</span></summary>
+            <div className="exp-science-body">
+              <p className="exp-small exp-muted">{detail.localModel.model} suggests an available action. Existing reflexes and learned preferences still decide. Generated explanations are proposals, not proof of thought or consciousness.</p>
+              {detail.localModel.pending && <p>{detail.localModel.pending.expiresTick >= (tick??0) ? 'Pending suggestion' : 'Expired suggestion'}: {detail.localModel.pending.key} — {detail.localModel.pending.reason}</p>}
+              {detail.localModel.history.slice(-3).reverse().map((h,i)=><p key={i}><b>{h.status}</b> · tick {h.decisionTick}<br/>{h.key}<br/>{h.reason}</p>)}
+            </div>
+          </details>}
           <AgencyEvidence detail={detail} tick={tick??0}/>
           <details className="exp-science exp-details" open>
             <summary>

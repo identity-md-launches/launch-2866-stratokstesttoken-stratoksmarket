@@ -105,6 +105,7 @@ export type Inspector = {
   relationships: Record<string, number>;
   reputation: Record<string, number>;
   following: { id: number; until: number } | null;
+  localModel?: {model?:string;pending:{key:string;reason:string;expiresTick:number}|null;history:{model:string;key:string;reason:string;status:string;decisionTick:number}[]} | null;
   note: string;
   activity?: { state: string; prim: string | null; phase: string | null; progress: number; target: {x: number; y: number} | null; item: string | null; load: number; capacity?: number; helping?: number; glyph?: string; carrying: Record<string, number>; tools: string[] };
   toolWear?: Record<string, number>;
