@@ -1,0 +1,22 @@
+{
+  "source": "actual isolated engine demo, not live world",
+  "checks": [
+    {
+      "width": 1440,
+      "loaded": true,
+      "zoom": true,
+      "residentSelection": true,
+      "follow": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "loaded": true,
+      "zoom": true,
+      "residentSelection": true,
+      "follow": true,
+      "noOverflow": true
+    }
+  ],
+  "errors": []
+}

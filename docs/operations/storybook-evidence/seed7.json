@@ -1,0 +1,667 @@
+{
+ "engine": "this checkout",
+ "source": {
+  "seed": 7,
+  "count": 40
+ },
+ "ticks": 9000,
+ "startTick": 0,
+ "endTick": 9000,
+ "start": {
+  "tick": 0,
+  "population": 40,
+  "piles": 0,
+  "pileUnits": 0,
+  "pileWood": 0,
+  "stored": 0,
+  "storedWood": 0,
+  "carried": 0
+ },
+ "end": {
+  "tick": 9000,
+  "population": 154,
+  "piles": 134,
+  "pileUnits": 232,
+  "pileWood": 119,
+  "stored": 1744,
+  "storedWood": 962,
+  "carried": 929,
+  "pileItems": {
+   "wood": 119,
+   "hand_axe": 8,
+   "stone": 18,
+   "stone_club": 19,
+   "stick": 22,
+   "berry": 17,
+   "fish_line": 6,
+   "bundle": 10,
+   "fiber": 10,
+   "flint": 2,
+   "fish": 1
+  }
+ },
+ "growthPer1000": {
+  "piles": 14.9,
+  "pileUnits": 25.8,
+  "pileWood": 13.2
+ },
+ "produced": {
+  "gathered": {
+   "berry": 4162,
+   "wood": 1844,
+   "stone": 659,
+   "stick": 775,
+   "fiber": 396,
+   "flint": 181,
+   "shellfish": 295,
+   "fish": 119,
+   "lichen": 151,
+   "cactus_fruit": 32
+  },
+  "crafted": {
+   "bundle": 121,
+   "stone_club": 137,
+   "hand_axe": 38,
+   "fish_line": 43
+  }
+ },
+ "consumed": {
+  "built": {
+   "wood": 264,
+   "stone": 169,
+   "fiber": 31,
+   "stick": 12
+  },
+  "repaired": {
+   "stone": 17,
+   "wood": 27,
+   "fiber": 1,
+   "stick": 1
+  },
+  "burned": {
+   "wood": 281,
+   "stick": 55,
+   "fiber": 35,
+   "bundle": 40
+  },
+  "wornOut": {
+   "fish_line": 16
+  },
+  "mendUsed": {
+   "flint": 18,
+   "fiber": 27
+  },
+  "craftUsed": {
+   "fiber": 164,
+   "stick": 296,
+   "stone": 137,
+   "flint": 38,
+   "bundle": 43
+  },
+  "eaten": {
+   "berry": 3792,
+   "cooked_berry": 186,
+   "shellfish": 249,
+   "cooked_fish": 4,
+   "cooked_lichen": 15,
+   "lichen": 116,
+   "fish": 111,
+   "cactus_fruit": 32,
+   "cooked_shellfish": 25
+  }
+ },
+ "movement": {
+  "placed": {
+   "wood": 585,
+   "stick": 151,
+   "bundle": 51,
+   "fiber": 72
+  },
+  "hauled": {
+   "wood": 227,
+   "stone": 58,
+   "berry": 79,
+   "cooked_berry": 14,
+   "stick": 68,
+   "flint": 21,
+   "fish": 4,
+   "fiber": 28,
+   "shellfish": 9
+  },
+  "deposited": {
+   "stone": 404,
+   "wood": 1132,
+   "berry": 456,
+   "stick": 328,
+   "cooked_berry": 14,
+   "fiber": 137,
+   "fish": 7,
+   "flint": 92,
+   "shellfish": 21,
+   "lichen": 1,
+   "cooked_shellfish": 4,
+   "cactus_fruit": 2,
+   "cooked_lichen": 2
+  },
+  "retrieved": {
+   "wood": 170,
+   "berry": 453,
+   "stone": 151,
+   "cooked_berry": 14,
+   "fish": 7,
+   "shellfish": 21,
+   "stick": 4,
+   "fiber": 27,
+   "lichen": 1,
+   "cooked_shellfish": 4,
+   "cactus_fruit": 2,
+   "cooked_lichen": 2
+  }
+ },
+ "gatherDemand": {
+  "demand": 788,
+  "surplus": 2943
+ },
+ "chains": {
+  "materials": {
+   "completed": 422,
+   "stored": 185,
+   "byUse": {
+    "build": 331,
+    "mend:hand_axe": 18,
+    "mend:fish_line": 27,
+    "repair-help": 8,
+    "repair": 38
+   },
+   "ticks": 449113,
+   "distance": 7659
+  },
+  "food": {
+   "completed": 3735,
+   "byOutcome": {
+    "eaten": 2478,
+    "shared": 1135,
+    "stored": 109,
+    "provisioned": 13
+   },
+   "cooked": 194,
+   "ticks": 218803
+  },
+  "explore": {
+   "started": 127,
+   "found": 45,
+   "returned": 29,
+   "settled": 2,
+   "failed": 80,
+   "ticks": 24812,
+   "distance": 843
+  }
+ },
+ "preparedFood": {
+  "completed": 194,
+  "byOutcome": {
+   "eaten": 147,
+   "stored": 12,
+   "shared": 35
+  },
+  "examples": [
+   {
+    "kind": "food",
+    "tick": 343,
+    "resident": 16,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "acquire:gather",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 45,
+    "hungerNow": 24,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 155
+   },
+   {
+    "kind": "food",
+    "tick": 343,
+    "resident": 23,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "acquire:gather",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 25,
+    "hungerNow": 0,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 27
+   },
+   {
+    "kind": "food",
+    "tick": 347,
+    "resident": 7,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "acquire:gather",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 43,
+    "hungerNow": 20,
+    "stockAtStart": 0,
+    "recipient": null,
+    "ticks": 119
+   },
+   {
+    "kind": "food",
+    "tick": 441,
+    "resident": 23,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "held",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 3,
+    "hungerNow": 0,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 8
+   },
+   {
+    "kind": "food",
+    "tick": 449,
+    "resident": 23,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "held",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 0,
+    "hungerNow": 0,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 2
+   },
+   {
+    "kind": "food",
+    "tick": 531,
+    "resident": 11,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "acquire:gather",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 34,
+    "hungerNow": 13,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 167
+   },
+   {
+    "kind": "food",
+    "tick": 536,
+    "resident": 1,
+    "item": "cooked_berry",
+    "outcome": "stored",
+    "cooked": true,
+    "stages": [
+     "held",
+     "prepare:cook",
+     "stored"
+    ],
+    "hungerAtStart": 56,
+    "hungerNow": 56,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 9
+   },
+   {
+    "kind": "food",
+    "tick": 561,
+    "resident": 29,
+    "item": "cooked_berry",
+    "outcome": "eaten",
+    "cooked": true,
+    "stages": [
+     "held",
+     "prepare:cook",
+     "eaten"
+    ],
+    "hungerAtStart": 45,
+    "hungerNow": 19,
+    "stockAtStart": null,
+    "recipient": null,
+    "ticks": 35
+   }
+  ]
+ },
+ "chainDurations": {
+  "materials": {
+   "n": 15,
+   "median": 842,
+   "p90": 5120
+  },
+  "food": {
+   "n": 277,
+   "median": 9,
+   "p90": 95
+  },
+  "explore": {
+   "n": 8,
+   "median": 907,
+   "p90": 1915
+  }
+ },
+ "chainExamples": [
+  {
+   "kind": "materials",
+   "tick": 8982,
+   "resident": 115,
+   "item": "stone",
+   "units": 1,
+   "use": "build",
+   "target": 86,
+   "stages": [
+    "acquire:gather",
+    "use:build"
+   ],
+   "stored": false,
+   "distance": 10,
+   "ticks": 35
+  },
+  {
+   "kind": "materials",
+   "tick": 8995,
+   "resident": 81,
+   "item": "flint",
+   "units": 1,
+   "use": "mend:hand_axe",
+   "target": "hand_axe",
+   "stages": [
+    "acquire:gather",
+    "use:mend:hand_axe"
+   ],
+   "stored": false,
+   "distance": 4,
+   "ticks": 92
+  },
+  {
+   "kind": "food",
+   "tick": 8998,
+   "resident": 54,
+   "item": "berry",
+   "outcome": "shared",
+   "cooked": false,
+   "stages": [
+    "acquire:gather",
+    "shared"
+   ],
+   "hungerAtStart": 27,
+   "hungerNow": 30,
+   "stockAtStart": null,
+   "recipient": 31,
+   "ticks": 77
+  },
+  {
+   "kind": "food",
+   "tick": 9000,
+   "resident": 120,
+   "item": "berry",
+   "outcome": "shared",
+   "cooked": false,
+   "stages": [
+    "acquire:gather",
+    "shared"
+   ],
+   "hungerAtStart": 1,
+   "hungerNow": 2,
+   "stockAtStart": 0,
+   "recipient": 28,
+   "ticks": 8
+  },
+  {
+   "kind": "explore",
+   "tick": 8980,
+   "resident": 50,
+   "item": "flint",
+   "outcome": "failed",
+   "found": null,
+   "from": {
+    "x": 58,
+    "y": 29
+   },
+   "farthest": 8,
+   "ticks": 902
+  },
+  {
+   "kind": "explore",
+   "tick": 9000,
+   "resident": 131,
+   "item": "flint",
+   "outcome": "failed",
+   "found": null,
+   "from": {
+    "x": 13,
+    "y": 7
+   },
+   "farthest": 22,
+   "ticks": 914
+  }
+ ],
+ "replans": {
+  "food-acquired": 6570,
+  "site-finished": 9,
+  "found": 45,
+  "danger": 286,
+  "attacked": 36,
+  "threatened": 12,
+  "repair-done": 9
+ },
+ "births": 123,
+ "deaths": 9,
+ "deathsByCause": {
+  "burns": 6,
+  "old_age": 3
+ },
+ "ledger": {
+  "ok": true,
+  "bad": []
+ },
+ "perf": {
+  "msPerTickMean": 25.02,
+  "p50": 20.98,
+  "p95": 55.57,
+  "max": 185.98,
+  "rssMB": 338,
+  "heapMB": 132
+ },
+ "series": [
+  {
+   "tick": 0,
+   "population": 40,
+   "piles": 0,
+   "pileUnits": 0,
+   "pileWood": 0,
+   "stored": 0,
+   "carried": 0
+  },
+  {
+   "tick": 500,
+   "population": 41,
+   "piles": 9,
+   "pileUnits": 11,
+   "pileWood": 9,
+   "stored": 110,
+   "carried": 172
+  },
+  {
+   "tick": 1000,
+   "population": 45,
+   "piles": 19,
+   "pileUnits": 29,
+   "pileWood": 23,
+   "stored": 206,
+   "carried": 178
+  },
+  {
+   "tick": 1500,
+   "population": 47,
+   "piles": 20,
+   "pileUnits": 32,
+   "pileWood": 18,
+   "stored": 270,
+   "carried": 141
+  },
+  {
+   "tick": 2000,
+   "population": 48,
+   "piles": 19,
+   "pileUnits": 39,
+   "pileWood": 17,
+   "stored": 327,
+   "carried": 178
+  },
+  {
+   "tick": 2500,
+   "population": 55,
+   "piles": 29,
+   "pileUnits": 46,
+   "pileWood": 16,
+   "stored": 405,
+   "carried": 195
+  },
+  {
+   "tick": 3000,
+   "population": 58,
+   "piles": 38,
+   "pileUnits": 54,
+   "pileWood": 20,
+   "stored": 473,
+   "carried": 258
+  },
+  {
+   "tick": 3500,
+   "population": 63,
+   "piles": 37,
+   "pileUnits": 52,
+   "pileWood": 24,
+   "stored": 537,
+   "carried": 315
+  },
+  {
+   "tick": 4000,
+   "population": 67,
+   "piles": 40,
+   "pileUnits": 56,
+   "pileWood": 25,
+   "stored": 627,
+   "carried": 396
+  },
+  {
+   "tick": 4500,
+   "population": 74,
+   "piles": 52,
+   "pileUnits": 73,
+   "pileWood": 32,
+   "stored": 720,
+   "carried": 368
+  },
+  {
+   "tick": 5000,
+   "population": 80,
+   "piles": 63,
+   "pileUnits": 88,
+   "pileWood": 42,
+   "stored": 805,
+   "carried": 444
+  },
+  {
+   "tick": 5500,
+   "population": 85,
+   "piles": 68,
+   "pileUnits": 103,
+   "pileWood": 53,
+   "stored": 887,
+   "carried": 541
+  },
+  {
+   "tick": 6000,
+   "population": 90,
+   "piles": 83,
+   "pileUnits": 144,
+   "pileWood": 79,
+   "stored": 994,
+   "carried": 546
+  },
+  {
+   "tick": 6500,
+   "population": 101,
+   "piles": 94,
+   "pileUnits": 152,
+   "pileWood": 76,
+   "stored": 1089,
+   "carried": 598
+  },
+  {
+   "tick": 7000,
+   "population": 110,
+   "piles": 108,
+   "pileUnits": 182,
+   "pileWood": 98,
+   "stored": 1178,
+   "carried": 652
+  },
+  {
+   "tick": 7500,
+   "population": 118,
+   "piles": 110,
+   "pileUnits": 186,
+   "pileWood": 101,
+   "stored": 1325,
+   "carried": 679
+  },
+  {
+   "tick": 8000,
+   "population": 129,
+   "piles": 117,
+   "pileUnits": 189,
+   "pileWood": 113,
+   "stored": 1456,
+   "carried": 671
+  },
+  {
+   "tick": 8500,
+   "population": 140,
+   "piles": 119,
+   "pileUnits": 183,
+   "pileWood": 99,
+   "stored": 1614,
+   "carried": 743
+  },
+  {
+   "tick": 9000,
+   "population": 154,
+   "piles": 134,
+   "pileUnits": 232,
+   "pileWood": 119,
+   "stored": 1744,
+   "carried": 929
+  }
+ ]
+}

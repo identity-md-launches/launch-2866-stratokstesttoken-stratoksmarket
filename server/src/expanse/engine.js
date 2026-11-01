@@ -314,18 +314,20 @@ export class Expanse {
       // optionally flint). Target a perceived pile within 2 tiles when available to avoid scattering fuel.
       // An on-tile pile permits consolidation without ignition; this does not guarantee a successful fire.
       const fireWanted = this.fireDemand(c, obs), pileNear = pileHere ?? obs.piles.filter((p) => !this.shelters.some((s) => s.x === p.x && s.y === p.y)).sort((a, b) => Math.max(Math.abs(a.x - c.x), Math.abs(a.y - c.y)) - Math.max(Math.abs(b.x - c.x), Math.abs(b.y - c.y)) || (a.id < b.id ? -1 : 1))[0];
-      // A held striker permits an ignition attempt, not guaranteed success. Spark misses still abort the
-      // current plan; no automatic retries, cleanup, stock deletion or global pile cap are imposed.
+      // Prefer locally perceived fuel after a failed spark rather than placing another unit.
+      // This remains a planner choice: danger and urgent needs may interrupt it; no stocks are deleted.
       // Flint struck on stone is most reliable; an ordinary sharp stone is a slower, less reliable fallback. Both
       // consume only the fuel placed on the ground, so no material is conjured to bootstrap a settlement fire.
       const canIgnite = !!inv.stone;
-      const canStartHere = c.warmth < 70 || obs.self.temp < 8 || heldCookable;
+      const canStartHere = !fireNear && (c.warmth < 70 || obs.self.temp < 8 || heldCookable);
+      const fuelNear = obs.piles.filter((p) => Object.entries(p.items).some(([k, n]) => FUEL[k] && n > 0))
+        .sort((a, b) => Math.max(Math.abs(a.x - c.x), Math.abs(a.y - c.y)) - Math.max(Math.abs(b.x - c.x), Math.abs(b.y - c.y)) || a.id.localeCompare(b.id))[0];
       for (const it of held) {
-        if (FUEL[it] && ((canStartHere && (pileHere || canIgnite)) || pileHere)) out.push({ prim: 'place', item: it, purpose: fireWanted ? 'prepare-fire' : undefined, ...(pileNear && !pileHere ? { x: pileNear.x, y: pileNear.y } : {}), key: modelKey('place', it, pileNear ? 'pile' : 'ground'), consumes: [it], label: 'GATHER_WOOD' });
+        if (FUEL[it] && !(canIgnite && fuelNear) && ((canStartHere && (pileHere || canIgnite)) || pileHere)) out.push({ prim: 'place', item: it, purpose: fireWanted ? 'prepare-fire' : undefined, ...(pileNear && !pileHere ? { x: pileNear.x, y: pileNear.y } : {}), key: modelKey('place', it, pileNear ? 'pile' : 'ground'), consumes: [it], label: 'GATHER_WOOD' });
         const striker = (it === 'flint' && inv.stone) || it === 'stone';
         // When this pile was deliberately made for a needed meal, keep the next attempt to a viable striker;
         // trying to rub the fuel/food itself on the pile is neither a useful replan nor a cooking demonstration.
-        if (c.energy >= 1.5 && (prev?.prim === 'place' || pileHere) && (!fireWanted || !canIgnite || striker)) out.push({ prim: 'use', item: it, on: 'pile', purpose: striker ? 'prepare-fire' : undefined, key: modelKey('use', `${it}@pile`), consumes: [], label: 'GATHER_WOOD' });
+        if (c.energy >= 1.5 && (prev?.prim === 'place' || pileHere || (striker && canStartHere && fuelNear)) && (!fireWanted || !canIgnite || striker)) out.push({ prim: 'use', item: it, on: 'pile', ...(striker && canStartHere && fuelNear && prev?.prim !== 'place' ? { x: fuelNear.x, y: fuelNear.y } : {}), purpose: striker ? 'prepare-fire' : undefined, key: modelKey('use', `${it}@pile`), consumes: [], label: 'GATHER_WOOD' });
         if (fireNear && c.energy >= 1) out.push({ prim: 'use', item: it, on: 'fire', fire: fireNear.id, x: fireNear.x, y: fireNear.y, key: modelKey('use', `${it}@fire`), consumes: [it], label: 'GATHER_WOOD' });
       }
       if (pileHere && !full && !prev) for (const it of Object.keys(pileHere.items).slice(0, 3)) out.push({ prim: 'carry', item: it, key: modelKey('carry', it), label: 'GATHER_WOOD' });
@@ -621,10 +623,10 @@ export class Expanse {
     if (target === false) return this.endStep(c, false, 'target-gone');
     if (target) {
       const reach = Math.max(Math.abs(target.x - c.x), Math.abs(target.y - c.y));
-      const need = a.prim === 'move' || a.prim === 'place' || a.prim === 'carry' ? 0 : a.prim === 'threaten' ? 3 : 1;
+      const need = a.prim === 'move' || a.prim === 'place' || a.prim === 'carry' || (a.prim === 'use' && a.on === 'pile') ? 0 : a.prim === 'threaten' ? 3 : 1;
       if (reach > need) {
         if (a.prim === 'move' && a.wasFlee && reach <= 0) return this.endStep(c, true);
-        if (!a.path || a.retarget) { a.path = this.findPath(c.x, c.y, target.x, target.y, !['move', 'place', 'carry'].includes(a.prim)); a.retarget = false; if (!a.path) return this.endStep(c, false, 'no-path'); }
+        if (!a.path || a.retarget) { a.path = this.findPath(c.x, c.y, target.x, target.y, !['move', 'place', 'carry'].includes(a.prim) && !(a.prim === 'use' && a.on === 'pile')); a.retarget = false; if (!a.path) return this.endStep(c, false, 'no-path'); }
         if (this.tick - a.started > 400) return this.endStep(c, false, 'too-far');
         a.phase = 'travel';
         return this.walk(c, a);
@@ -652,7 +654,7 @@ export class Expanse {
       case 'move': return { x: a.x, y: a.y };
       case 'place': case 'carry': if (a.x === undefined) return null; if (a.prim === 'carry' && !this.pileAt(a.x, a.y)) return false; return { x: a.x, y: a.y };
       case 'gather': case 'inspect': { const n = this.nodeAt(a.x, a.y); return n && n.id === a.node && !n.dead ? n : false; }
-      case 'use': if (a.on === 'water') return { x: a.x, y: a.y }; if (a.on === 'fire') { const f = this.fires.find((q) => q.id === a.fire); return f ?? false; } return null;
+      case 'use': if (a.on === 'pile' && a.x !== undefined) return this.pileAt(a.x, a.y) ? { x: a.x, y: a.y } : false; if (a.on === 'water') return { x: a.x, y: a.y }; if (a.on === 'fire') { const f = this.fires.find((q) => q.id === a.fire); return f ?? false; } return null;
       case 'deposit': case 'retrieve': case 'repair': return this.shelters.find((q) => q.id === a.shelter && q.complete !== false) ?? false;
       case 'build': if (a.site === undefined) return null; return this.shelters.find((q) => q.id === a.site) ?? false;
       case 'salvage': return this.shelters.find((q) => q.id === a.shelter && q.complete !== false) ?? false;

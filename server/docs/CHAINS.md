@@ -9,8 +9,8 @@ memory or learned weight is touched. An older server ignores the extra fields.
 
 | Rule | Before | Now |
 |---|---|---|
-| `place` (fuel on ground) | always offered for any held fuel, onto the resident's current tile | away from an on-tile pile, requires warmth < 70, perceived temperature < 8 °C, or held cookable food, **and held stone** (optionally flint); wood alone or wood plus flint cannot bootstrap a fire. An on-tile pile allows consolidation without ignition; if a pile is perceived within 2 tiles the resident walks onto it, so fuel is consolidated instead of scattered |
-| `use@pile` (strike) | predicted consumption of the striker | consumes no held item, matching execution on success and failure. The ordinary failure/replan policy, ignition probabilities and energy costs are unchanged |
+| `place` (fuel on ground) | always offered for any held fuel, onto the resident's current tile | away from an on-tile pile, requires warmth < 70, perceived temperature < 8 °C, or held cookable food, **and held stone** (optionally flint); wood alone or wood plus flint cannot bootstrap a fire. An on-tile pile allows consolidation without ignition. A resident holding a striker prefers an existing perceived fuel pile within 2 tiles over placing more fuel; new fire preparation is suppressed when a fire is already perceived. If only an unfueled pile is perceived, placement walks onto that exact tile |
+| `use@pile` (strike) | predicted consumption of the striker | consumes no held item, matching execution on success and failure. Failed sparks can be retried on an existing locally perceived fuel pile; the resident walks onto that exact tile. Missing targets cancel the attempt. Ignition probabilities and energy costs are unchanged |
 | `carry` (pick up) | only from a pile on the resident's own tile, never as a first step after something else | additionally a **haul** step to a perceived pile ≤2 tiles away when its material has a visible use or a remembered store has room |
 | `deposit` | to the nearest known store | to the nearest known store **not remembered as full** (memory may be stale; a full store still fails honestly) |
 | acquisition drive (`0.12 × items` in the step reward) | every produced unit | only units with a perceived use: materials named by the resident's own demand at decision time, food while not sated or carrying ≤3, fuel under fire demand, a tool not already held |
@@ -59,5 +59,4 @@ Bounds (`CHAIN_LIMITS`): 6 decision records, 3 alternatives each, 6 provenance k
   for zoomed-out rendering; quantities are exact and every member is selectable. `shared/stockpiles.js` exports
   `aggregatePiles(piles, cell)` so the browser can aggregate at other zoom cells (1/2/4/8).
 
-The web renderer is not changed by this component (web/ is outside its scope). Until integration, the existing
-client keeps drawing one sprite per pile; the server-side fix already reduces the number of piles.
+The integrated web renderer groups nearby stock by zoom, resource class and terrain bank; all quantities remain inspectable. Grouping changes presentation, not the ledger. Ground stock can still grow as population and explored area grow; no global pile cap or stock deletion is applied. See the rollout evidence for measured limits.

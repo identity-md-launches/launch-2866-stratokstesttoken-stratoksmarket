@@ -126,7 +126,7 @@ function fuelCase(items) {
 for (const ignition of [{ stone: 1 }, { flint: 1, stone: 1 }]) {
   test(`ignition-ready fuel consolidates onto a perceived pile with exact accounting (${Object.keys(ignition)})`, () => {
     const { e, c } = fuelCase({ wood: 1, ...ignition });
-    e.dropToPile(c.x + 1, c.y, 'stick', 2); e.totals.gathered.stick = (e.totals.gathered.stick ?? 0) + 2;
+    e.dropToPile(c.x + 1, c.y, 'stone', 2); e.totals.gathered.stone = (e.totals.gathered.stone ?? 0) + 2;
     const before = e.holdings(), piles = pileUnits(e).piles;
     const place = e.affordances(c, e.perceive(c))(c.inventory, null).find((s) => s.prim === 'place' && s.item === 'wood');
     assert.ok(place); assert.equal(place.x, c.x + 1); assert.equal(place.y, c.y);
@@ -136,7 +136,7 @@ for (const ignition of [{ stone: 1 }, { flint: 1, stone: 1 }]) {
     assert.equal(c.act, null, 'target reached and placement finished');
     assert.equal(c.inventory.wood, undefined);
     assert.equal(e.pileAt(place.x, place.y).items.wood, 1);
-    assert.equal(e.pileAt(place.x, place.y).items.stick, 2);
+    assert.equal(e.pileAt(place.x, place.y).items.stone, 2);
     assert.equal(e.totals.placed.wood, 1);
     assert.equal(pileUnits(e).piles, piles, 'no extra pile created');
     assert.deepEqual(e.holdings(), before, 'placement transfers rather than consumes stock');
@@ -189,3 +189,38 @@ for (const striker of ['stone', 'flint']) {
     } finally { e.rng.next = next; }
   });
 }
+
+
+test('failed ignition reuses perceived fuel without placing extra wood and reaches its exact tile', () => {
+  const {e,c}=fuelCase({wood:1,stone:1});
+  const target={x:c.x+1,y:c.y};
+  e.dropToPile(target.x,target.y,'stick',2); e.totals.gathered.stick=2;
+  const before=e.holdings(), next=e.rng.next;
+  try {
+    e.rng.next=()=>0.999999;
+    for(let attempt=0;attempt<3;attempt++) {
+      const offers=e.affordances(c,e.perceive(c))(c.inventory,null);
+      assert.ok(!offers.some(s=>s.prim==='place'), 'existing fuel must not be topped up for every failed spark');
+      const step=offers.find(s=>s.prim==='use'&&s.on==='pile'&&s.item==='stone');
+      assert.ok(step); assert.equal(step.x,target.x);
+      c.plan={raw:[step],idx:0,actual:[],steps:[],predicted:[],demand:[]}; e.startStep(c);
+      for(let i=0;i<30&&c.act;i++)e.stepAct(c);
+      assert.equal(c.act,null);assert.equal(c.x,target.x);assert.equal(c.y,target.y);
+      assert.deepEqual(e.holdings(),before);assert.deepEqual(ledger(e),[]);
+    }
+    assert.equal(c.inventory.wood,1);assert.equal(pileUnits(e).piles,1);
+    const step=e.affordances(c,e.perceive(c))(c.inventory,null).find(s=>s.prim==='use'&&s.on==='pile'&&s.item==='stone');
+    e.rng.next=()=>0;
+    c.plan={raw:[step],idx:0,actual:[],steps:[],predicted:[],demand:[]};e.startStep(c);
+    for(let i=0;i<30&&c.act;i++)e.stepAct(c);
+    assert.equal(e.fires.length,1);assert.equal(c.inventory.wood,1);assert.deepEqual(ledger(e),[]);
+  } finally {e.rng.next=next;}
+});
+
+test('a planned fuel target disappearing aborts without igniting another tile',()=>{
+  const {e,c}=fuelCase({stone:1});e.dropToPile(c.x+1,c.y,'stick',1);
+  const step=e.affordances(c,e.perceive(c))(c.inventory,null).find(s=>s.prim==='use'&&s.on==='pile'&&s.item==='stone');
+  assert.ok(step);const p=e.pileAt(step.x,step.y);p.items={};e.removePileIfEmpty(p);
+  c.plan={raw:[step],idx:0,actual:[],steps:[],predicted:[],demand:[]};e.startStep(c);e.stepAct(c);
+  assert.equal(c.act,null);assert.equal(e.fires.length,0);
+});
