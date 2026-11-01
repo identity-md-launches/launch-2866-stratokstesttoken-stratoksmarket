@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Expanse,expectedHoldings} from '../server/src/expanse/engine.js';
-import {startCognition,parseReply} from '../server/src/expanse/cognition.js';
+import {startCognition,parseReply,modelNeeds} from '../server/src/expanse/cognition.js';
 import {actionSignature,usableAdvice,finishAdvice,LLM_BONUS} from '../server/src/expanse/cognition-rules.js';
 const create=()=>Expanse.create({initialCount:4},{seed:7});
 const response=choice=>new Response(JSON.stringify({done:true,message:{content:JSON.stringify({choice,reason:'Try an available action.'})}}),{headers:{'Content-Type':'application/json'}});
@@ -75,4 +75,8 @@ test('a natural pilot death frees its queue slot for an existing adult, never cr
  w.creatures=w.creatures.filter(c=>c.id!==initial[0]);const count=w.creatures.length;
  await svc.runOnce();assert.equal(w.creatures.length,count);assert.equal(svc.status().pilots.length,3);
  assert.ok(svc.status().pilots.includes(replacement));assert.ok(!svc.status().pilots.includes(initial[0]));svc.stop();
+});
+
+test('model receives unambiguous need labels, independent of inverse raw scales',()=>{
+ assert.deepEqual(modelNeeds({hunger:10,thirst:6,energy:100,warmth:20,health:50}),{food_need:'low',water_need:'low',rest_need:'low',warmth_need:'high',recovery_need:'moderate'});
 });

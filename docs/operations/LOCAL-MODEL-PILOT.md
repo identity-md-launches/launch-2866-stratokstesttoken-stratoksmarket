@@ -27,3 +27,7 @@ For the deployed server, set `LOCAL_MODEL_ENABLED: 'false'` in `/opt/stratoks/co
 The model service has a 2 GiB memory limit. The current 2-CPU, approximately 4-GB VPS cannot support simultaneous inference for the whole population. Expansion requires measured load and behavioral validation, not just raising the pilot count. A model pause never pauses the world.
 
 References: https://docs.ollama.com/docker , https://docs.ollama.com/api/chat , https://docs.ollama.com/faq
+
+## Interpretation limits
+
+A live pilot reply incorrectly described thirst 6 as high and energy 100 as low. Input now converts inverse numeric scales into explicit low/moderate/high need labels to remove this avoidable ambiguity. This does not guarantee correct reasoning: reasons remain untrusted generated text and cannot authorize new actions. No improvement in survival, diversity or learning is established by this installation. Compare seeded control groups and repeated runs before expanding or making such claims.

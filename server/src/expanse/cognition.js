@@ -1,5 +1,7 @@
 // Optional local-only asynchronous adviser. World ticks never await inference.
 import {actionSignature} from './cognition-rules.js';
+const needBand=v=>v>60?'high':v>25?'moderate':'low';
+export const modelNeeds=c=>({food_need:needBand(c.hunger),water_need:needBand(c.thirst),rest_need:needBand(100-c.energy),warmth_need:needBand(100-c.warmth),recovery_need:needBand(100-c.health)});
 const needs=c=>Object.fromEntries(['hunger','thirst','energy','warmth','health'].map(k=>[k,Math.round(c[k])]));
 export function captureRequest(world,c,obs,cands) {
   const sorted=[...cands].sort((a,b)=>b.u-a.u), unique=[]; const signatures=new Set(),primitives=new Set();
@@ -11,7 +13,7 @@ export function captureRequest(world,c,obs,cands) {
     unique.push({id:`${s.prim}_${unique.length}`,key:s.key,signature:sig,step:structuredClone(s),score:Math.round(q.u*100)/100});
   }
   return {resident:c.id,tick:world.tick,position:{x:c.x,y:c.y},needs:needs(c),options:unique,
-    context:{needs:needs(c),inventory:{...c.inventory},environment:{...obs.ambient},goal:c.mind.goals?.find(g=>g.status==='active')?.kind??null,
+    context:{needs:modelNeeds(c),inventory:{...c.inventory},environment:{...obs.ambient},goal:c.mind.goals?.find(g=>g.status==='active')?.kind??null,
       seen:{foodNodes:obs.nodes.filter(n=>['bush','cactus','fish','shellfish','lichen'].includes(n.kind)&&n.units>0).length,water:!!obs.water,fires:obs.fires.length,neighbors:obs.creatures.length},
       experiences:c.mind.episodes.slice(-2).map(e=>({action:e.key,success:e.success,reward:Math.round(e.reward*100)/100})),
       options:unique.map(q=>({id:q.id,action:q.key,score:q.score}))}};
@@ -55,7 +57,7 @@ export function startCognition(world,{url,model='qwen3:1.7b',intervalMs=60000,ti
     controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),timeoutMs),started=now();
     try{
       const response=await fetchImpl(new URL('/api/chat',endpoint),{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({model,stream:false,think:false,keep_alive:'5m',
-        messages:[{role:'system',content:'Advise one simulated creature using ONLY its supplied observations, inventory and experiences. Higher hunger/thirst means greater need; lower warmth/health/energy means greater need. Choose exactly one offered id. Scores are the existing learned planner preferences, not facts. Return JSON choice and a brief reason (12 words). Do not invent events or capabilities. /no_think'},{role:'user',content:JSON.stringify(req.context)}],
+        messages:[{role:'system',content:'Advise one simulated creature using ONLY its supplied observations, inventory and experiences. Each need is explicitly labeled low, moderate or high. Low means already satisfied; high means needs attention. Do not reverse these labels. Choose exactly one offered id. Scores are the existing learned planner preferences, not facts. Return JSON choice and a brief reason (12 words). Do not invent events or capabilities. /no_think'},{role:'user',content:JSON.stringify(req.context)}],
         format:{type:'object',properties:{choice:{type:'string',enum:req.options.map(q=>q.id)},reason:{type:'string'}},required:['choice','reason'],additionalProperties:false},
         options:{num_ctx:1536,num_predict:64,num_thread:1,temperature:0,seed:req.resident}})});
       if(!response.ok)throw Error('model-http-'+response.status);
