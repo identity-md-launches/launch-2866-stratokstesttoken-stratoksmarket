@@ -68,3 +68,11 @@ test('bad model configuration cannot prevent the world service starting',async()
   assert.equal((await (await fetch(base+'/healthz')).json()).ok,true);
  }finally{await svc.stop();fs.rmSync(dir,{recursive:true,force:true});}
 });
+test('a natural pilot death frees its queue slot for an existing adult, never creates a resident',async()=>{
+ const w=create();w.creatures.forEach(c=>c.age=10000);
+ const svc=startCognition(w,{url:'http://localhost',autoStart:false});
+ const initial=[...svc.status().pilots],replacement=w.creatures.find(c=>!initial.includes(c.id)).id;
+ w.creatures=w.creatures.filter(c=>c.id!==initial[0]);const count=w.creatures.length;
+ await svc.runOnce();assert.equal(w.creatures.length,count);assert.equal(svc.status().pilots.length,3);
+ assert.ok(svc.status().pilots.includes(replacement));assert.ok(!svc.status().pilots.includes(initial[0]));svc.stop();
+});

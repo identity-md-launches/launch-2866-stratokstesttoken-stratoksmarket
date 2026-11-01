@@ -26,8 +26,16 @@ export function parseReply(content,request){
 export function startCognition(world,{url,model='qwen3:1.7b',intervalMs=60000,timeoutMs=45000,pilotCount=3,fetchImpl=fetch,now=Date.now,autoStart=true}={}) {
   const endpoint=new URL(url);
   if(!['http:','https:'].includes(endpoint.protocol)||endpoint.username||endpoint.password||endpoint.search||endpoint.hash)throw Error('invalid local model endpoint');
-  const pilots=world.creatures.filter(c=>world.isAdult(c)).slice().sort((a,b)=>a.id-b.id).slice(0,Math.max(1,Math.min(3,pilotCount))).map(c=>c.id);
+  const limit=Math.max(1,Math.min(3,pilotCount)),pilots=[];
   const queue=new Map(),asked=new Map(); let running=false,stopped=false,nextAt=0,controller;
+  function refreshPilots(){
+    for(let i=pilots.length-1;i>=0;i--)if(!world.getCreature(pilots[i])){queue.delete(pilots[i]);asked.delete(pilots[i]);pilots.splice(i,1);}
+    if(pilots.length<limit)for(const c of world.creatures.slice().sort((a,b)=>a.id-b.id)){
+      if(pilots.length>=limit)break;
+      if(world.isAdult(c)&&!pilots.includes(c.id))pilots.push(c.id);
+    }
+  }
+  refreshPilots();
   const stats={requested:0,accepted:0,rejected:0,failed:0,lastLatencyMs:null,lastError:null};
   const offer=(c,obs,cands)=>{
     if(stopped||world.mode!=='full'||!pilots.includes(c.id)||!cands.length)return;
@@ -37,7 +45,8 @@ export function startCognition(world,{url,model='qwen3:1.7b',intervalMs=60000,ti
   };
   world.onCognitionCandidates=offer;world.localModelEnabled=true;
   async function runOnce(){
-    if(stopped||running||now()<nextAt||world.mode!=='full')return false;
+    if(stopped)return false;refreshPilots();
+    if(running||now()<nextAt||world.mode!=='full')return false;
     const requests=[...queue.values()].sort((a,b)=>(asked.get(a.resident)??0)-(asked.get(b.resident)??0)||a.resident-b.resident);
     const req=requests.find(r=>world.getCreature(r.resident)&&world.tick-r.tick<=30);
     for(const r of requests)if(world.tick-r.tick>30||!world.getCreature(r.resident))queue.delete(r.resident);

@@ -4,7 +4,7 @@ This is an optional experiment, not evidence of consciousness or a biological br
 
 ## Limits and behavior
 
-- Three existing adult residents, chosen by ascending ID when the service starts. No residents are created or reset. Dead pilot residents are not automatically replaced until a restart.
+- Three existing adult residents, chosen by ascending ID when the service starts. No residents are created or reset. When a pilot dies naturally, another existing adult fills the vacant slot; no more than three are advised at once.
 - One asynchronous inference at a time, at most one per minute across all three. Queue holds only their latest decision contexts. HTTP readers cannot trigger inference.
 - A model chooses among at most six actual current affordances/plans. Its valid suggestion adds only 0.5 to the matching fresh candidate utility; it does not force execution, create resources, invent abilities or change world rules.
 - Emergency reflexes take priority. Replies expire after 120 ticks, are ignored after movement beyond three cells or needs changing over 20 points, and must still match a current candidate. Failures/timeouts do not stop world ticks.
