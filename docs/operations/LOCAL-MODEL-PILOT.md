@@ -31,3 +31,7 @@ References: https://docs.ollama.com/docker , https://docs.ollama.com/api/chat , 
 ## Interpretation limits
 
 A live pilot reply incorrectly described thirst 6 as high and energy 100 as low. Input now converts inverse numeric scales into explicit low/moderate/high need labels to remove this avoidable ambiguity. This does not guarantee correct reasoning: reasons remain untrusted generated text and cannot authorize new actions. No improvement in survival, diversity or learning is established by this installation. Compare seeded control groups and repeated runs before expanding or making such claims.
+
+## Prompt-cache memory correction
+
+The pinned Ollama runner inherited llama.cpp's 8-GiB host prompt-cache default, which caused one runner OOM during the initial multi-resident run despite its short context. `LLAMA_ARG_CACHE_RAM=0` disables this extra host prompt cache, while the 2-GiB container limit remains. Verify startup logs report the cache disabled after upgrades; the setting is inherited by this runner, not a stable Ollama API parameter. Sources: https://github.com/ollama/ollama/issues/18264 and https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md .

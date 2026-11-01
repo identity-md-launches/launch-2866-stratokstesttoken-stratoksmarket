@@ -1,0 +1,18 @@
+✔ disabled cognition preserves deterministic evolution and exact restart (284.927714ms)
+✔ model sees only bounded actual decision choices, writes one receipt and cannot invent an action (97.896348ms)
+✔ invalid choices, truncated output and oversized response fail without modifying creature memory (65.136634ms)
+✔ one request at a time, bounded queue and late stopped replies cannot change world (20.385191ms)
+✔ timeouts fall back without blocking world ticks (21.218022ms)
+✔ advice is bounded, context-sensitive, expires, and is disabled without the runtime switch (3.95695ms)
+✔ emergency reflex overrides any proposed action and ledger remains exact (60.171424ms)
+✔ bad model configuration cannot prevent the world service starting (140.268124ms)
+✔ a natural pilot death frees its queue slot for an existing adult, never creates a resident (11.849268ms)
+✔ model receives unambiguous need labels, independent of inverse raw scales (0.41423ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 738.149595

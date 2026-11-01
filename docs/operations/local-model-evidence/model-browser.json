@@ -1,0 +1,80 @@
+{
+  "status": {
+    "enabled": true,
+    "mode": "bounded-adviser-pilot",
+    "model": "qwen3:1.7b",
+    "pilots": [
+      6941,
+      6946,
+      6949
+    ],
+    "intervalMs": 60000,
+    "queued": 1,
+    "running": false,
+    "requested": 1,
+    "accepted": 1,
+    "rejected": 0,
+    "failed": 0,
+    "lastLatencyMs": 25970,
+    "lastError": null,
+    "residents": [
+      {
+        "id": 6941,
+        "name": "Bopeye",
+        "pending": true,
+        "selectedInRecentHistory": 0,
+        "history": []
+      },
+      {
+        "id": 6946,
+        "name": "Hakaha",
+        "pending": false,
+        "selectedInRecentHistory": 0,
+        "history": [
+          {
+            "status": "unavailable",
+            "model": "qwen3:1.7b",
+            "requestedTick": 437872,
+            "receivedTick": 437899,
+            "expiresTick": 438019,
+            "key": "gather|bush|",
+            "reason": "Need for food is highest, best option to gather bush berries for immediate sustenance.",
+            "decisionTick": 437930
+          },
+          {
+            "status": "unavailable",
+            "model": "qwen3:1.7b",
+            "requestedTick": 438007,
+            "receivedTick": 438033,
+            "expiresTick": 438153,
+            "key": "gather|bush|",
+            "reason": "Need for food is high, best option to satisfy hunger",
+            "decisionTick": 438041
+          }
+        ]
+      },
+      {
+        "id": 6949,
+        "name": "Toye",
+        "pending": false,
+        "selectedInRecentHistory": 0,
+        "history": []
+      }
+    ]
+  },
+  "checks": [
+    {
+      "width": 1440,
+      "resident": 6941,
+      "modelRecordVisible": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "resident": 6941,
+      "modelRecordVisible": true,
+      "noOverflow": true
+    }
+  ],
+  "errors": []
+}
