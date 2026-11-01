@@ -1,0 +1,28 @@
+{
+  "url": "https://stratoks.2-29-11-211.sslip.io",
+  "checks": [
+    {
+      "width": 1440,
+      "anonymousView": true,
+      "serverVerifiedLogin": true,
+      "logoutRevoked": true,
+      "noTransactions": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "anonymousView": true,
+      "serverVerifiedLogin": true,
+      "logoutRevoked": true,
+      "noTransactions": true,
+      "noOverflow": true
+    }
+  ],
+  "errors": [],
+  "provider": "Simulated injected wallet; real disposable EOA signature; actual HTTPS backend; no transactions",
+  "world": {
+    "worldId": "world-20260101-0",
+    "fromTick": 433145,
+    "toTick": 433178
+  }
+}

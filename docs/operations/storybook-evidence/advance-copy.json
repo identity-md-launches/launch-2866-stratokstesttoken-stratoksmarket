@@ -1,0 +1,2 @@
+{"stage":"before-step","initialDiscrepancies":{"stone":192,"wood":234}}
+{"ok":true,"from":432300,"to":432400,"noNewAccountingDiscrepancy":true,"initialDiscrepancies":{"stone":192,"wood":234},"samples":[{"tick":432325,"population":180},{"tick":432350,"population":181},{"tick":432375,"population":181},{"tick":432400,"population":180}]}

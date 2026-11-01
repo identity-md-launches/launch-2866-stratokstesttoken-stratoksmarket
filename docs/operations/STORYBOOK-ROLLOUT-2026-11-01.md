@@ -25,3 +25,11 @@ Rollout must archive the stopped live volume, retain it as rollback, restore to 
 Art remains simpler than the concept illustration. The model is a designed learning simulation, not a full biological fly brain or demonstrated conscious life. IMD gameplay payments are not implemented.
 
 The saved live world already has ledger offsets of +192 stone and +234 wood relative to its historical counters. Both the old and new engine reproduce those same offsets before stepping and retain them unchanged over 100 copied-world ticks. No correction, deletion or new discrepancy was introduced. Fresh seeded simulations use exact ledger assertions. This historical offset remains documented rather than silently rewriting stock.
+
+## Completed live cutover
+
+Source `dba2cdc` is live at https://stratoks.2-29-11-211.sslip.io on 2026-11-01. Image `stratoks-storybook:r1`, release `/opt/stratoks/releases/storybook-r1`, volume `stratoks_storybook_r1`. The previous `stratoks_wallet_37053ce` volume is retained unchanged.
+
+Cutover at tick 433110, 181 residents: all 1,616,136 existing field values preserved; 914 additive chain defaults initialized. Complete normalized state matches across old/new volume copies. Actual HTTPS Chromium checks at 1440x900 and 390x844 passed anonymous viewing, real server-verified disposable EOA signature, logout invalidation, no overflow and no page exceptions. The injected wallet provider was simulated; installed extensions are not claimed tested. World advanced from tick 433145 to 433178 during checks.
+
+Stopped-world archive is retained on the VPS and off-host: SHA256 `c6fe120f495d275c2bce38bbaca75e54dc2f3f6853999b6f82fe171c5607ad1a`, 17,899,520 bytes. Rollback configs and checks are under `/opt/stratoks/rollouts/storybook-r1`. Daily backups retain their existing schedule. Evidence in `storybook-evidence/` separates demo screenshots from actual live screenshots.
