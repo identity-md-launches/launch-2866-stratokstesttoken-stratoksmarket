@@ -18,3 +18,5 @@ Model `qwen3:1.7b` digest: `8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff
 - Daily backup uses the active Compose volume. Disabling the pilot leaves existing learned state and history intact. API GET endpoints only observe; they cannot invoke the model or edit the world.
 
 Validation reports are in `local-model-evidence/`. Private world backups and credentials are not in this repository.
+
+Post-correction check: runner log confirms prompt cache disabled; a real `/api/chat` completed HTTP 200 in 39.36 seconds. Loaded container RAM was 1.55 GiB, fresh cgroup OOM counters were zero, and world tick advanced to 438765. This is a short recovery check, not a long-duration stability claim. The one failed request recorded in the world status coincided with the model-container recreation; subsequent success cleared lastError.
